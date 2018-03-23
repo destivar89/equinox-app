@@ -1,29 +1,30 @@
 package com.telefonica.bluetoothwifigiver
 
+import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
 
-class MainActivity : AppCompatActivity() {
 
-    private var REQUEST_BLUETOOTH = 1
-
+class BluetoothDiscoveryService: Service() {
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    var pairedDevices = bluetoothAdapter.bondedDevices
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        Log.i("TAG", "Received start")
 
         checkBluetooth()
         startBluetooth()
         startScanning()
-
+        return Service.START_STICKY
     }
 
     private fun checkBluetooth() {
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!bluetoothAdapter.isEnabled) {
             val enableBT = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBT, REQUEST_BLUETOOTH)
+            applicationContext.startActivity(enableBT)
         }
 
     }
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
                 handler.postDelayed(this, delay)
             }
         }, delay)
+
     }
 
 }
